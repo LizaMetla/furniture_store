@@ -1,4 +1,7 @@
-def get_worker():
+import pickle
+
+
+def get_department():
     department = {
         "id_department": None,  # идент. отдела
         "department_name": None,  # название отдела
@@ -39,28 +42,37 @@ def menu():
     '''
 
 
-def save_to_db_furniture(data: dict):
-    pass
+def save_to_db_furniture(furniture: dict):
+    with open('furniture.pickle', 'wb') as f:
+        pickle.dump(furniture, f)
 
 
-def save_to_db_position(data: dict):
-    pass
+def save_to_db_batch(batch: dict):
+    with open('batch.pickle', 'wb') as f:
+        pickle.dump(batch, f)
 
 
-def save_to_db_worker(data: dict):
-    pass
+def save_to_db_department(department: dict):
+    with open('department.pickle', 'wb') as f:
+        pickle.dump(department, f)
 
 
 def get_from_db_furniture() -> dict:
-    pass
+    with open('furniture.pickle', 'rb') as f:
+        furniture_new = pickle.load(f)
+        return furniture_new
 
 
-def get_from_db_position() -> dict:
-    pass
+def get_from_db_batch() -> dict:
+    with open('batch.pickle', 'rb') as f:
+        batch_new = pickle.load(f)
+        return batch_new
 
 
-def get_from_db_worker() -> dict:
-    pass
+def get_from_db_department() -> dict:
+    with open('department.pickle', 'rb') as f:
+        department_new = pickle.load(f)
+        return department_new
 
 
 def main():
