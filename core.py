@@ -106,8 +106,15 @@ def add_menu():
      0: ''}.get(answer, "Ввод параметров неверный!")()
 
 
-def search_dict_in_list_by_id(id, shop_instance_list):
-    pass
+def filter(shop_instance_list, **kwargs):
+    search_result = []
+    for instance in shop_instance_list:
+        if all(param in instance for param in kwargs):
+            for param in kwargs:
+                if instance[param] == kwargs[param] and instance not in search_result:
+                    search_result.append(instance)
+    return search_result
+
 
 
 def main():
