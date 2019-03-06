@@ -1,4 +1,7 @@
-from db_layer import *
+from db_layer import *   # чтобы доставать информацию из файла,не перечисляя все ф-ии
+
+
+# функции заполнения данными
 
 
 def get_department():
@@ -66,11 +69,25 @@ def main_menu():
      0: ''}.get(answer, "Ввод параметров неверный!")()
 
 
-# TODO: add functions for all shop instance
+# added functions for all shop instance
+
+
 def add_furniture():
     furniture = get_furniture()
     fill_shop_instance(furniture)
     save_to_db_furniture(furniture)
+
+
+def add_batch():
+    batch = get_batch()
+    fill_shop_instance(batch)
+    save_to_db_batch(batch)
+
+
+def add_department():
+    department = get_department()
+    fill_shop_instance(department)
+    save_to_db_department(department)
 
 
 def add_menu():
@@ -83,8 +100,8 @@ def add_menu():
     """
     answer = menu(add_menu_info)
     {1: add_furniture,
-     2: '',
-     3: '',
+     2: add_department,
+     3: add_batch,
      0: ''}.get(answer, "Ввод параметров неверный!")()
 
 
