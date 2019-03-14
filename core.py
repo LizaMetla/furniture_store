@@ -1,6 +1,5 @@
 from db_layer import *   # чтобы доставать информацию из файла,не перечисляя все ф-ии
 
-
 # функции заполнения данными
 
 
@@ -52,6 +51,14 @@ def menu(menu_info):
             print('Повторите ввод!')
 
 
+def search_furniture(id_furniture):
+    furnitures = get_from_db_furniture()
+    for furniture in furnitures:
+        if furniture['id_furniture'] == id_furniture:
+           return furnitures
+
+# something is clearly wrong, because i'm loaf :)
+
 def main_menu():
     menu_info = '''
     1. Просмотр 
@@ -67,6 +74,7 @@ def main_menu():
      2: '',
      3: add_menu,
      4: '',
+     5: filter,
      0: ''}.get(answer, "Ввод параметров неверный!")()
 
 
