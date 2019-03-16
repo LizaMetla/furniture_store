@@ -27,23 +27,25 @@ def get_from_db_department() -> list:
     except EOFError:
         return []
 
+def save(obj_list, file_name):
+    with open(file_name, 'wb') as f:
+        pickle.dump(obj_list, f)
 
-def save_to_db_furniture(furniture: dict):
+def add_to_db_furniture(furniture: dict):
     furniture_list = get_from_db_furniture()
     furniture_list.append(furniture)
-    with open('Furniture.pickle', 'wb') as f:
-        pickle.dump(furniture_list, f)
+    save('Furniture.pickle', furniture_list)
 
 
-def save_to_db_batch(batch: dict):
+
+def add_to_db_batch(batch: dict):
     batch_list = get_from_db_batch()
     batch_list.append(batch)
-    with open('Batch.pickle', 'wb') as f:
-        pickle.dump(batch_list, f)
+    save('Batch.pickle', batch_list)
 
 
-def save_to_db_department(department: dict):
+def add_to_db_department(department: dict):
     department_list = get_from_db_department()
     department_list.append(department)
-    with open('Department.pickle', 'wb') as f:
-        pickle.dump(department_list, f)
+    save('Department.pickle', department_list)
+
