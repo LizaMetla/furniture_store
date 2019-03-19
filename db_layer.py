@@ -1,51 +1,41 @@
 import pickle
 
 
-def get_from_db_furniture() -> list:
+def get_from_db_furniture() -> dict:
     try:
         with open('Furniture.pickle', 'rb') as f:
             furniture_new = pickle.load(f)
             return furniture_new
     except EOFError:
-        return []
+        return {'db_name': 'Furniture.pickle',
+                'db_objects': []}
 
 
-def get_from_db_batch() -> list:
+def get_from_db_batch() -> dict:
     try:
         with open('Batch.pickle', 'rb') as f:
             batch_new = pickle.load(f)
             return batch_new
     except EOFError:
-        return []
+        return {'db_name': 'Batch.pickle',
+                'db_objects': []}
 
 
-def get_from_db_department() -> list:
+def get_from_db_department() -> dict:
     try:
         with open('Department.pickle', 'rb') as f:
             department_new = pickle.load(f)
             return department_new
     except EOFError:
-        return []
+        return {'db_name': 'Department.pickle',
+                'db_objects': []}
 
-def save(obj_list, file_name):
+
+def save(objects, file_name):
     with open(file_name, 'wb') as f:
-        pickle.dump(obj_list, f)
-
-def add_to_db_furniture(furniture: dict):
-    furniture_list = get_from_db_furniture()
-    furniture_list.append(furniture)
-    save('Furniture.pickle', furniture_list)
+        pickle.dump(objects, f)
 
 
-
-def add_to_db_batch(batch: dict):
-    batch_list = get_from_db_batch()
-    batch_list.append(batch)
-    save('Batch.pickle', batch_list)
-
-
-def add_to_db_department(department: dict):
-    department_list = get_from_db_department()
-    department_list.append(department)
-    save('Department.pickle', department_list)
-
+def add_to_db(db_objects: dict, instance: dict):
+    db_objects['db_objects'].append(instance)
+    save(db_objects, db_objects['db_name'])

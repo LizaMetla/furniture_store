@@ -1,105 +1,9 @@
-from db_layer import *  # чтобы доставать информацию из файла,не перечисляя все ф-ии
-from menu_info import *
-from base_structure import *
+from base_structure import get_furniture, get_batch, get_department
+from db_layer import get_from_db_furniture, get_from_db_department, get_from_db_batch, save, add_to_db
+from menu_info import main_menu_info, search_choice, add_menu_info
 
 
-# функции заполнения данными
-
-
-def fill_shop_instance(data):
-    for key in data:
-        data[key] = input(f'{key}: ')
-
-
-# фунции поиска элемента для осуществления просмотра/редактирования/удаления
-
-def search_furniture_by_id(id_furniture):
-    appointments = get_from_db_furniture()
-    for furniture in appointments:
-        if furniture['id_product'] == id_furniture:
-            return furniture
-
-
-def search_department_by_id(id_department):
-    departments = get_from_db_department()
-    for department in departments:
-        if department['id_department'] == id_department:
-            return department
-
-
-def search_batch_by_id(id_batch):
-    batches = get_from_db_batch()
-    for batch in batches:
-        if batch['id_batch'] == id_batch:
-            return batch
-
-
-# created new menu
-
-
-# здесь нужно создать подменю , в котором мы выбираем какое поле изменить (?)
-# Возможно ли его создать в editing_menu ?
-
-
-# это отдельная функция по фильтрации продуктов по id
-
-# функции по добавлению элементов
-
-
-def add_furniture():
-    furniture = get_furniture()
-    fill_shop_instance(furniture)
-    add_to_db_furniture(furniture)
-
-
-def add_batch():
-    batch = get_batch()
-    fill_shop_instance(batch)
-    add_to_db_batch(batch)
-
-
-def add_department():
-    department = get_department()
-    fill_shop_instance(department)
-    add_to_db_department(department)
-
-
-def add_menu():
-    answer = menu(add_menu_info)
-    {1: add_furniture,
-     2: add_department,
-     3: add_batch,
-     0: ''}.get(answer, send_error)()
-
-
-# функция для просмотра содержимого
-
-
-def filter_(shop_instance_list, **kwargs):
-    search_result = []
-    for instance in shop_instance_list:
-        if all(param in instance for param in kwargs):
-            for param in kwargs:
-                if instance[param] == kwargs[param] and instance not in search_result:
-                    search_result.append(instance)
-    return search_result
-
-
-def main():
-    main_menu()
-
-
-def main_menu():
-    answer = menu(main_menu_info)
-    {1: filter_by_id,
-     2: '',
-     3: add_menu,
-     4: '',
-     5: '',
-     0: ''}.get(answer, send_error)()
-
-
-def menu(menu_info):
+def menu_input(menu_info):
     while 1:
         print(menu_info)
         answer = input('Выберите пункт меню: ')
@@ -109,17 +13,84 @@ def menu(menu_info):
             print('Повторите ввод!')
 
 
-def filter_by_id():
-    answer = menu(search_choice)
-    id = input('Введите id: ')
-    dict_print({1: search_furniture_by_id,
-                2: search_department_by_id,
-                3: search_batch_by_id}.get(answer, send_error)(id))
-
-
 def dict_print(dict_obj):
-    for key, value in dict_obj.items():
-        print(key, value)
+    if dict_obj is not None:
+        for key, value in dict_obj.items():
+            print(f'{key}: {value}')
+
+
+def filter_by_id_menu():
+    answer = menu_input(search_choice)
+    if answer == '0':
+        return None, None
+    db_objects = {1: get_from_db_furniture,
+                  2: get_from_db_department,
+                  3: get_from_db_batch}.get(answer, send_error)()
+    for db_object in db_objects['db_objects']:
+        dict_print(db_object)
+        print('*' * 30)
+    id = input('Введите id: ')
+    return search_by_id(id, db_objects), db_objects
+
+
+def search_by_id(obj_id, db_objects):
+    for db_object in db_objects['db_objects']:
+        if db_object['id_product'] == obj_id:
+            return db_object
+
+
+def delete_by_id_menu():
+    result, db_objects = filter_by_id_menu()
+    db_objects["db_objects"].remove(result)
+    save(db_objects, db_objects['db_name'])
+    return result, db_objects
+
+
+def add_menu():
+    answer = menu_input(add_menu_info)
+    if answer == '0':
+        return None, None
+    db_objects = {1: get_from_db_furniture,
+                  2: get_from_db_department,
+                  3: get_from_db_batch}.get(answer, send_error)()
+    empty_db_obj = {1: get_furniture,
+                    2: get_batch,
+                    3: get_department}.get(answer, send_error)()
+    fill_shop_instance(empty_db_obj)
+    add_to_db(db_objects, empty_db_obj)
+    return None, None
+
+
+# функции заполнения данными
+
+def fill_shop_instance(data):
+    for key in data:
+        data[key] = input(f'{key}: ')
+
+
+def edit_db_obj_menu():
+    result, db_objects = delete_by_id_menu()
+    flag_exit = 'Д'
+    while (flag_exit == "Д"):
+        key = input('Введите имя поля для редактирования: ')
+        while (key not in result):
+            print('Ошибка! Повторите ввод!!!')
+            key = input('Введите имя поля для редактирования: ')
+        result[key] = input('Введите новое поле: ')
+        flag_exit = input('Продолжить редактирование Д/н')
+    add_to_db(db_objects, result)
+    return None, None
+
+
+def main():
+    while True:
+        answer = menu_input(main_menu_info)
+        result, db_objects = {1: filter_by_id_menu,
+                              2: delete_by_id_menu,
+                              3: add_menu,
+                              4: edit_db_obj_menu,
+                              0: exit}.get(answer, send_error)()
+        dict_print(result)
 
 
 def send_error(*args, **kwargs):
@@ -129,3 +100,17 @@ def send_error(*args, **kwargs):
 
 if __name__ == '__main__':
     main()
+
+
+
+# функция для просмотра содержимого
+#
+#
+# def filter_(shop_instance_list, **kwargs):
+#     search_result = []
+#     for instance in shop_instance_list:
+#         if all(param in instance for param in kwargs):
+#             for param in kwargs:
+#                 if instance[param] == kwargs[param] and instance not in search_result:
+#                     search_result.append(instance)
+#     return search_result
