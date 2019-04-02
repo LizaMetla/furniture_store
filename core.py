@@ -22,7 +22,7 @@ def dict_print(dict_obj):
 def filter_by_id():
     answer = menu_input(search_choice)
     if answer == '0':
-        return None, None
+        return None
     db_objects = {1: get_from_db_furniture,
                   2: get_from_db_department,
                   3: get_from_db_batch}.get(answer, send_error)()
@@ -54,21 +54,25 @@ def delete_by_id():
 def add_menu():
     answer = menu_input(add_menu_info)
     if answer == '0':
-        return None, None
+        return None
     db_objects = {1: get_from_db_furniture,
                   2: get_from_db_department,
                   3: get_from_db_batch}.get(answer, send_error)()
     empty_db_obj = {1: get_furniture,
                     2: get_batch,
                     3: get_department}.get(answer, send_error)()
-    fill_shop_instance(empty_db_obj)
+    fill_shop_instance(empty_db_obj, db_objects['db_name'])
     add_to_db(db_objects, empty_db_obj)
 
 
 # функции заполнения данными
 
-def fill_shop_instance(data):
+def fill_shop_instance(data, db_name):
     for key in data:
+        if db_name == "Furniture.pickle" and key == "id_batch":
+            answer = None
+            while answer is None:
+                pass #TODO
         data[key] = input(f'{key}: ')
 
 
@@ -93,11 +97,11 @@ def delete_by_id_menu():
 def main():
     while True:
         answer = menu_input(main_menu_info)
-        result, db_objects = {1: filter_by_id_menu,
-                              2: delete_by_id_menu,
-                              3: add_menu,
-                              4: edit_db_obj_menu,
-                              0: exit}.get(answer, send_error)()
+        result = {1: filter_by_id_menu,
+                  2: delete_by_id_menu,
+                  3: add_menu,
+                  4: edit_db_obj_menu,
+                  0: exit}.get(answer, send_error)()
         dict_print(result)
 
 
