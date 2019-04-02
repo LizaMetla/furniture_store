@@ -19,7 +19,7 @@ def dict_print(dict_obj):
             print(f'{key}: {value}')
 
 
-def filter_by_id_menu():
+def filter_by_id():
     answer = menu_input(search_choice)
     if answer == '0':
         return None, None
@@ -33,6 +33,11 @@ def filter_by_id_menu():
     return search_by_id(id, db_objects), db_objects
 
 
+def filter_by_id_menu():
+    result, _ = filter_by_id()
+    return result
+
+
 def search_by_id(obj_id, db_objects):
     for db_object in db_objects['db_objects']:
         if db_object['id_product'] == obj_id:
@@ -40,7 +45,7 @@ def search_by_id(obj_id, db_objects):
 
 
 def delete_by_id_menu():
-    result, db_objects = filter_by_id_menu()
+    result, db_objects = filter_by_id()
     db_objects["db_objects"].remove(result)
     save(db_objects, db_objects['db_name'])
     return result, db_objects
@@ -85,7 +90,7 @@ def edit_db_obj_menu():
 def main():
     while True:
         answer = menu_input(main_menu_info)
-        result, db_objects = {1: filter_by_id_menu,
+        result, db_objects = {1: filter_by_id,
                               2: delete_by_id_menu,
                               3: add_menu,
                               4: edit_db_obj_menu,
@@ -100,8 +105,6 @@ def send_error(*args, **kwargs):
 
 if __name__ == '__main__':
     main()
-
-
 
 # функция для просмотра содержимого
 #
