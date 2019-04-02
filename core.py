@@ -44,7 +44,7 @@ def search_by_id(obj_id, db_objects):
             return db_object
 
 
-def delete_by_id_menu():
+def delete_by_id():
     result, db_objects = filter_by_id()
     db_objects["db_objects"].remove(result)
     save(db_objects, db_objects['db_name'])
@@ -63,7 +63,6 @@ def add_menu():
                     3: get_department}.get(answer, send_error)()
     fill_shop_instance(empty_db_obj)
     add_to_db(db_objects, empty_db_obj)
-    return None, None
 
 
 # функции заполнения данными
@@ -74,7 +73,7 @@ def fill_shop_instance(data):
 
 
 def edit_db_obj_menu():
-    result, db_objects = delete_by_id_menu()
+    result, db_objects = delete_by_id()
     flag_exit = 'Д'
     while (flag_exit == "Д"):
         key = input('Введите имя поля для редактирования: ')
@@ -84,13 +83,17 @@ def edit_db_obj_menu():
         result[key] = input('Введите новое поле: ')
         flag_exit = input('Продолжить редактирование Д/н')
     add_to_db(db_objects, result)
-    return None, None
+
+
+def delete_by_id_menu():
+    result, _ = delete_by_id()
+    return result
 
 
 def main():
     while True:
         answer = menu_input(main_menu_info)
-        result, db_objects = {1: filter_by_id,
+        result, db_objects = {1: filter_by_id_menu,
                               2: delete_by_id_menu,
                               3: add_menu,
                               4: edit_db_obj_menu,
