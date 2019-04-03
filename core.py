@@ -26,6 +26,7 @@ def filter_by_id():
     db_objects = {1: get_from_db_furniture,
                   2: get_from_db_department,
                   3: get_from_db_batch}.get(answer, send_error)()
+    sorted(db_objects['db_objects'], key=max, reverse=False) # Сортировка перед выводом на экран
     for db_object in db_objects['db_objects']:
         dict_print(db_object)
         print('*' * 30)

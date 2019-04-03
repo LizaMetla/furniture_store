@@ -38,4 +38,5 @@ def save(objects, file_name):
 
 def add_to_db(db_objects: dict, instance: dict):
     db_objects['db_objects'].append(instance)
+    sorted(db_objects['db_objects'], key=max, reverse=False)  # Сортировка перед сохранением
     save(db_objects, db_objects['db_name'])
