@@ -2,7 +2,8 @@ from base_structure import get_furniture, get_batch, get_department
 from db_layer import get_from_db_furniture, get_from_db_department, get_from_db_batch, save, add_to_db
 from menu_info import main_menu_info, search_choice, add_menu_info
 
-#нужно добавить сортировку
+
+# нужно добавить сортировку
 def menu_input(menu_info):
     while True:
         print(menu_info)
@@ -26,7 +27,7 @@ def filter_by_id():
     db_objects = {1: get_from_db_furniture,
                   2: get_from_db_department,
                   3: get_from_db_batch}.get(answer, send_error)()
-    sorted(db_objects['db_objects'], key=max, reverse=False) # Сортировка перед выводом на экран
+    sorted(db_objects['db_objects'], key=max, reverse=False)  # Сортировка перед выводом на экран
     for db_object in db_objects['db_objects']:
         dict_print(db_object)
         print('*' * 30)
@@ -35,13 +36,23 @@ def filter_by_id():
 
 
 def filter_by_id_menu():
-    result, _ = filter_by_id()
+    result, db_objects = filter_by_id()
+    if db_objects['db_name'] == 'Batch.pickle':
+        furniture_objects = filter_(get_from_db_furniture(), id_batch=result['id_batch'])
+        department_objects = get_from_db_department()
+        batch_to_department = []
+        for furniture_object in furniture_objects:
+            batch_to_department.append(search_by_id(furniture_object['id_department'], department_objects))
+        print('Список связанных с поставкой отделов:')
+        for department in batch_to_department:
+            dict_print(department)
     return result
 
 
 def search_by_id(obj_id, db_objects):
     for db_object in db_objects['db_objects']:
-        if db_object['id_product'] == obj_id:
+        if db_object.get('id_product') == obj_id or db_object.get('id_batch') == obj_id or db_object.get(
+                'id_department') == obj_id:
             return db_object
 
 
@@ -74,12 +85,12 @@ def fill_shop_instance(data, db_name):
         if db_name == "Furniture.pickle":
             if key == "id_batch":
                 while not filter_(get_from_db_batch(), id_batch=value):
-                    print('Поставка с данным id ещё не создана.', 'Введите id снова - ' )
+                    print('Поставка с данным id ещё не создана.', 'Введите id снова - ')
                     value = input(f'{key}: ')
 
             elif key == "id_department":
                 while not filter_(get_from_db_department(), id_department=value):
-                    print('Отдел с данным id ещё не создан.', 'Введите id снова - ' )
+                    print('Отдел с данным id ещё не создан.', 'Введите id снова - ')
                     value = input(f'{key}: ')
 
         data[key] = value
@@ -111,6 +122,7 @@ def main():
                   3: add_menu,
                   4: edit_db_obj_menu,
                   0: exit}.get(answer, send_error)()
+        print('Результат действия: \n')
         dict_print(result)
 
 
@@ -131,6 +143,6 @@ def filter_(shop_instance_list, **kwargs):
                     search_result.append(instance)
     return search_result
 
+
 if __name__ == '__main__':
     main()
-
