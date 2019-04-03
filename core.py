@@ -2,7 +2,7 @@ from base_structure import get_furniture, get_batch, get_department
 from db_layer import get_from_db_furniture, get_from_db_department, get_from_db_batch, save, add_to_db
 from menu_info import main_menu_info, search_choice, add_menu_info
 
-
+#нужно добавить сортировку
 def menu_input(menu_info):
     while True:
         print(menu_info)
