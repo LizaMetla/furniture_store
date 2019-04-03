@@ -41,12 +41,12 @@ def filter_by_id_menu():
         furniture_objects = filter_(get_from_db_furniture(), id_batch=result[
             'id_batch'])  # Ищем всю мебель, в которой id отдела совпадает с id поставки
         department_objects = get_from_db_department() # Получаем всю ммебель
-        batch_to_department = []
+        batch_to_department = [] # Создаём пустой список связанных объектов поставки и отдела
         for furniture_object in furniture_objects:
-            batch_to_department.append(search_by_id(furniture_object['id_department'], department_objects))
+            batch_to_department.append(search_by_id(furniture_object['id_department'], department_objects)) # Ищем все отделы, в которых id совпадает с id отдела в найденной мебели
         print('Список связанных с поставкой отделов:')
         for department in batch_to_department:
-            dict_print(department)
+            dict_print(department) # Печать отелов на экран
     return result
 
 
